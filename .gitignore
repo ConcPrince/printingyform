@@ -30,3 +30,6 @@ ehthumbs.db
 .env
 .env.local
 *.env.local
+# Additional environment variable files
+.env.production
+.env.development
