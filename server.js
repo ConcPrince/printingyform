@@ -4,23 +4,30 @@ import nodemailer from 'nodemailer';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import { isEmail } from 'validator'; // Add proper validation package
+import { isEmail } from 'validator';
 
 dotenv.config();  // Load environment variables from .env file
 
 const app = express();
 const port = process.env.PORT || 3000;  // Use PORT from environment or default to 3000
 
+// Configure CORS to restrict access to your frontend
+const allowedOrigins = ['https://printing.com'];
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST'],
+  credentials: true,
+}));
+
 // Middlewares
-app.use(cors());
 app.use(bodyParser.json());  // Parse JSON bodies
 
 // SMTP Setup using Nodemailer
 const transporter = nodemailer.createTransport({
-  service: 'gmail', 
+  service: 'gmail',
   auth: {
-    user: process.env.SMTP_USER,  
-    pass: process.env.SMTP_PASS,  
+    user: process.env.SMTP_USER,  // Your email used for SMTP
+    pass: process.env.SMTP_PASS,  // Your email password for SMTP
   },
 });
 
@@ -68,5 +75,5 @@ app.post('/contact', (req, res) => {
 
 // Start Server
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on https://printingyform.vercel.app:${port}`);
 });
