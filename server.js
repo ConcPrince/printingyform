@@ -75,5 +75,5 @@ app.post('/contact', (req, res) => {
 
 // Start Server
 app.listen(port, () => {
-  console.log(`Server is running on https://printingyform.vercel.app:${port}`);
+  console.log(`Server is running on https://printingyform.vercel.app`);
 });
