@@ -15,7 +15,7 @@ const port = process.env.PORT || 3000;  // Use PORT from environment or default 
 const BASE_URL = process.env.BASE_URL || `http://localhost:${port}`;
 
 // Middlewares
-app.use(cors());
+app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000' })); // Allow requests from your frontend
 app.use(bodyParser.json());  // Parse JSON bodies
 
 // SMTP Setup using Nodemailer
