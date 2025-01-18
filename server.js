@@ -24,16 +24,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Route to test server
-app.get('/contact', (req, res) => {
-  console.log(`[${new Date().toISOString()}] GET /contact`);
-  res.send('Server is running, ready to handle POST requests on /contact');
+// Test Route to Verify API
+app.get('/api/contact', (req, res) => {
+  console.log(`[${new Date().toISOString()}] GET /api/contact`);
+  res.send('API is up and running.');
 });
 
 // Contact Form Submission Endpoint
-app.post('/contact', (req, res) => {
-  console.log(`[${new Date().toISOString()}] POST /contact`);
-  
+app.post('/api/contact', (req, res) => {
+  console.log(`[${new Date().toISOString()}] POST /api/contact`);
+
   try {
     const { name, email, phone, message } = req.body;
 
