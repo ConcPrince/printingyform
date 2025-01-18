@@ -11,16 +11,21 @@ const app = express();
 const port = process.env.PORT || 3000; // Default port to 3000 if not specified
 const BASE_URL = process.env.BASE_URL || `http://localhost:${port}`;
 
-// CORS Configuration
+// CORS configuration
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000', // Allow only the frontend domain
+  origin: 'https://printingy.com', // Allow only your frontend domain
   methods: 'GET,POST',
   allowedHeaders: 'Content-Type',
 };
 
-// Middleware
-app.use(cors(corsOptions)); // Use CORS middleware with the above options
-app.use(bodyParser.json()); // Parse JSON bodies
+// Middleware for CORS
+app.use(cors(corsOptions));
+
+// Middleware to parse JSON bodies
+app.use(bodyParser.json());
+
+// Handle preflight requests (OPTIONS) for CORS
+app.options('/api/contact', cors(corsOptions));
 
 // Nodemailer Transporter
 const transporter = nodemailer.createTransport({
@@ -46,7 +51,7 @@ app.get('/api/contact', (req, res) => {
 // Contact Form Submission Endpoint at `/api/contact`
 app.post('/api/contact', (req, res) => {
   console.log(`[${new Date().toISOString()}] POST /api/contact`);
-  
+
   try {
     const { name, email, phone, message } = req.body;
 
