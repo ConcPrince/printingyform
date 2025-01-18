@@ -1,57 +1,75 @@
-// Import necessary modules
-const express = require('express');
-const path = require('path');
-const morgan = require('morgan');
-const cors = require('cors');
-const compression = require('compression');
-const dotenv = require('dotenv');
+import express from 'express';
+import nodemailer from 'nodemailer';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+import { isEmail } from 'validator';
+import helmet from 'helmet';  // For adding security headers
 
-// Load environment variables from .env file
 dotenv.config();
 
-// Create an Express app
 const app = express();
+const port = process.env.PORT || 3000;  // Use PORT from environment or default to 3000
+
+const BASE_URL = process.env.BASE_URL || `http://localhost:${port}`;
 
 // Use middlewares
-app.use(cors()); // Enable Cross-Origin Resource Sharing
-app.use(morgan('combined')); // Log HTTP requests
-app.use(compression()); // Compress response bodies
-app.use(express.json()); // Parse incoming JSON requests
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
+app.use(helmet()); // Secure your app by adding security headers
+app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000' }));
+app.use(bodyParser.json());
 
-// Serve static files from 'public' folder
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Simple route for the homepage
-app.get('/', (req, res) => {
-  res.send('Welcome to the backend!');
+// SMTP setup using Nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',  // You may want to consider using SendGrid, SES, etc.
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
 });
 
-// Example API route (GET)
-app.get('/api/data', (req, res) => {
-  res.json({ message: 'This is your data.' });
+// Test if server is running
+app.get('/contact', (req, res) => {
+  res.send('Server is running, ready to handle POST requests on /contact');
 });
 
-// Example API route (POST)
-app.post('/api/data', (req, res) => {
-  const { userData } = req.body;
-  // Process data and send response
-  res.json({ message: 'Data received', data: userData });
+// Handle contact form submission
+app.post('/contact', (req, res) => {
+  const { name, email, phone, message } = req.body;
+
+  // Validation
+  if (!name || !email || !phone || !message) {
+    return res.status(400).json({ error: 'All fields are required.' });
+  }
+
+  if (!isEmail(email)) {
+    return res.status(400).json({ error: 'Invalid email format.' });
+  }
+
+  const mailOptions = {
+    from: email,
+    to: process.env.RECEIVER_EMAIL,
+    subject: 'New Contact Form Submission',
+    text: `
+      Name: ${name}
+      Email: ${email}
+      Phone: ${phone}
+      Message: ${message}
+    `,
+  };
+
+  // Send email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+      return res.status(500).json({ error: 'Failed to send message. Please try again later.' });
+    } else {
+      console.log('Email sent: ' + info.response);
+      return res.status(200).json({ message: 'Your message has been sent successfully!' });
+    }
+  });
 });
 
-// Catch-all route for handling undefined routes (404)
-app.use((req, res, next) => {
-  res.status(404).send('Not Found');
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something went wrong!');
-});
-
-// Set up server to listen on a specific port (process.env.PORT or 3000)
-const port = process.env.PORT || 3000;
+// Start the server
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on ${BASE_URL}`);
 });
