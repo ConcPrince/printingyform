@@ -36,18 +36,18 @@ const transporter = nodemailer.createTransport({
 // Root Route: Respond with a message on "/"
 app.get('/', (req, res) => {
   console.log(`[${new Date().toISOString()}] GET /`);
-  res.send('Server is up and running! Use /api/contact to send messages.');
+  res.send('Server is up and running! Use /contact to send messages.');
 });
 
-// Test Route for `/api/contact`
+// Test Route for `/contact`
 app.get('/contact', (req, res) => {
-  console.log(`[${new Date().toISOString()}] GET /api/contact`);
-  res.send('Server is running, ready to handle POST requests on /api/contact');
+  console.log(`[${new Date().toISOString()}] GET /contact`);
+  res.send('Server is running, ready to handle POST requests on /contact');
 });
 
-// Contact Form Submission Endpoint at `/api/contact`
+// Contact Form Submission Endpoint at `/contact`
 app.post('/contact', (req, res) => {
-  console.log(`[${new Date().toISOString()}] POST /api/contact`);
+  console.log(`[${new Date().toISOString()}] POST /contact`);
   
   try {
     const { name, email, phone, message } = req.body;
