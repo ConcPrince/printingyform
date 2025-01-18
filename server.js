@@ -95,4 +95,4 @@ app.post('/contact', (req, res) => {
 // Start Server
 app.listen(port, () => {
   console.log(`[${new Date().toISOString()}] Server is running on ${BASE_URL}`);
-});
+}); 
