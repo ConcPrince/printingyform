@@ -3,10 +3,15 @@ import nodemailer from 'nodemailer';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import { isEmail } from 'validator';
-import path from 'path';
+import validator from 'validator';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config(); // Load environment variables from .env file
+
+// Fix for __dirname in ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 3000; // Default port to 3000 if not specified
@@ -53,7 +58,7 @@ app.post('/api/contact', (req, res) => {
       return res.status(400).json({ error: 'All fields are required.' });
     }
 
-    if (!isEmail(email)) {
+    if (!validator.isEmail(email)) { // Using the correct method from 'validator'
       console.error('Validation failed: Invalid email format');
       return res.status(400).json({ error: 'Invalid email format.' });
     }
