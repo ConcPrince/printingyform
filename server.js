@@ -11,8 +11,15 @@ const app = express();
 const port = process.env.PORT || 3000; // Default port to 3000 if not specified
 const BASE_URL = process.env.BASE_URL || `http://localhost:${port}`;
 
+// CORS Configuration
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000', // Allow only the frontend domain
+  methods: 'GET,POST',
+  allowedHeaders: 'Content-Type',
+};
+
 // Middleware
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000' }));
+app.use(cors(corsOptions)); // Use CORS middleware with the above options
 app.use(bodyParser.json()); // Parse JSON bodies
 
 // Nodemailer Transporter
