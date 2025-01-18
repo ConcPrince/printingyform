@@ -40,13 +40,13 @@ app.get('/', (req, res) => {
 });
 
 // Test Route for `/api/contact`
-app.get('/api/contact', (req, res) => {
+app.get('/contact', (req, res) => {
   console.log(`[${new Date().toISOString()}] GET /api/contact`);
   res.send('Server is running, ready to handle POST requests on /api/contact');
 });
 
 // Contact Form Submission Endpoint at `/api/contact`
-app.post('/api/contact', (req, res) => {
+app.post('/contact', (req, res) => {
   console.log(`[${new Date().toISOString()}] POST /api/contact`);
   
   try {
